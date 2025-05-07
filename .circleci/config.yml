@@ -1,1 +1,50 @@
+version: 2.1
 
+orbs:
+  slack: circleci/slack@4.12.5
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:20.5.0
+    steps:
+      - checkout
+      - run: echo "Instalando dependencias..."
+      - run: npm install
+
+  test:
+    docker:
+      - image: cimg/node:20.5.0
+    parallelism: 2
+    steps:
+      - checkout
+      - run: echo "Ejecutando pruebas (simuladas)..."
+      - run: |
+          echo "Soy el nodo $CIRCLE_NODE_INDEX de $CIRCLE_NODE_TOTAL"
+          mkdir test-results
+          echo "Test exitoso desde nodo $CIRCLE_NODE_INDEX" > test-results/salida-$CIRCLE_NODE_INDEX.txt
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+
+  deploy:
+    docker:
+      - image: cimg/node:20.5.0
+    steps:
+      - checkout
+      - run: echo "¡Despliegue exitoso simulado!"
+      - slack/notify:
+          event: pass
+          template: basic_success_1
+
+workflows:
+  version: 2
+  flujo-principal:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
