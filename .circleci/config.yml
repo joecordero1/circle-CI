@@ -9,7 +9,7 @@ jobs:
       - image: cimg/node:20.5.0
     steps:
       - checkout
-      - run: echo "Instalando dependencias..."
+      - run: echo "Construyendo el proyecto..."
       - run: npm install
 
   test:
@@ -18,11 +18,9 @@ jobs:
     parallelism: 2
     steps:
       - checkout
-      - run: echo "Ejecutando pruebas (simuladas)..."
       - run: |
+          echo "Ejecutando pruebas en paralelo"
           echo "Soy el nodo $CIRCLE_NODE_INDEX de $CIRCLE_NODE_TOTAL"
-          mkdir test-results
-          echo "Test exitoso desde nodo $CIRCLE_NODE_INDEX" > test-results/salida-$CIRCLE_NODE_INDEX.txt
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -32,7 +30,7 @@ jobs:
       - image: cimg/node:20.5.0
     steps:
       - checkout
-      - run: echo "¡Despliegue exitoso simulado!"
+      - run: echo "Desplegando aplicación..."
       - slack/notify:
           event: pass
           template: basic_success_1
