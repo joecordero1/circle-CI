@@ -40,7 +40,11 @@ jobs:
           command: echo "Desplegando aplicación..."
       - slack/notify:
           event: pass
-          template: basic_success_1
+          custom: |
+            {
+              "text": "✅ ¡Hola Johanna! Tu pipeline finalizó correctamente 🚀"
+            }
+
 
 workflows:
   version: 2
