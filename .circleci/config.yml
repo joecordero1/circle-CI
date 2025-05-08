@@ -3,57 +3,64 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.12.5
 
-jobs:
-  build:
+executors:
+  node-executor:
     docker:
       - image: cimg/node:20.5.0
+
+jobs:
+  install_dependencies:
+    executor: node-executor
     steps:
       - checkout
+      - run: npm ci
+
+  lint:
+    executor: node-executor
+    steps:
+      - checkout
+      - run: npm ci
       - run:
-          name: Construcción
-          command: |
-            echo "Construyendo el proyecto..."
-            npm install
+          name: Análisis de estilo con ESLint
+          command: npm run lint
 
   test:
-    docker:
-      - image: cimg/node:20.5.0
     parallelism: 2
+    executor: node-executor
     steps:
       - checkout
+      - run: npm ci
       - run:
-          name: Pruebas paralelas
+          name: Ejecutar pruebas en paralelo
           command: |
-            echo "Ejecutando pruebas en paralelo"
-            echo "Soy el nodo $CIRCLE_NODE_INDEX de $CIRCLE_NODE_TOTAL"
+            TEST_FILES=$(circleci tests glob "test/**/*.js" | circleci tests split --split-by=timings)
+            echo "$TEST_FILES" | xargs -n 1 node
       - slack/notify:
           event: fail
           template: basic_fail_1
 
-  deploy:
-    docker:
-      - image: cimg/node:20.5.0
+  build:
+    executor: node-executor
     steps:
       - checkout
       - run:
-          name: Despliegue
-          command: echo "Desplegando aplicación..."
+          name: Simular build
+          command: echo "Construcción completa."
       - slack/notify:
           event: pass
-          custom: |
-            {
-              "text": "PRUEBA ALFIN!!!!!pipeline finalizó correctamente++++++++++"
-            }
-
+          template: basic_success_1
 
 workflows:
   version: 2
-  flujo-principal:
+
+  test_pipeline:
     jobs:
-      - build
-      - test:
+      - lint
+      - test
+
+  build_pipeline:
+    jobs:
+      - install_dependencies
+      - build:
           requires:
-            - build
-      - deploy:
-          requires:
-            - test
+            - install_dependencies

@@ -7,6 +7,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo Simulando pruebas && exit 0"
+    "test": "jest",
+    "lint": "eslint test/"
   }
 }
