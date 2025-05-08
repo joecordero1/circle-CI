@@ -9,5 +9,8 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint test/"
+  },
+  "devDependencies": {
+    "eslint": "^9.26.0"
   }
 }
