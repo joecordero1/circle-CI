@@ -42,7 +42,7 @@ jobs:
           event: pass
           custom: |
             {
-              "text": "!!!!!pipeline finalizó correctamente++++++++++"
+              "text": "ALFIN!!!!!pipeline finalizó correctamente++++++++++"
             }
 
 
