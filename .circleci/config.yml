@@ -34,7 +34,8 @@ jobs:
           name: Ejecutar pruebas en paralelo
           command: |
             TEST_FILES=$(circleci tests glob "test/**/*.js" | circleci tests split --split-by=timings)
-            echo "$TEST_FILES" | xargs -n 1 node
+            npx jest --runTestsByPath $TEST_FILES
+
       - slack/notify:
           event: fail
           template: basic_fail_1
