@@ -31,7 +31,7 @@ jobs:
       - checkout
       - run: npm ci
       - run:
-          name: Ejecutar pruebas en paralelo
+          name: Ejecutar pruebas en paralelo.
           command: |
             TEST_FILES=$(circleci tests glob "test/**/*.js" | circleci tests split --split-by=timings)
             npx jest --runTestsByPath $TEST_FILES
